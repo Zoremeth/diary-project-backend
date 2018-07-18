@@ -13,7 +13,7 @@ namespace Database {
     public class Program {
         public static void Main(string[] args) {
             CreateWebHostBuilder(args).Build().Run();
-            using(var context = new BackendContext()) {
+            using(var context = new DiaryContext()) {
                 List<Entry> test = new List<Entry>();
                 test.Add(new Entry { Id = 1, Title = "test", Date = "test", Content = "test", Deleted = false, Locked = "test" });
                 var testuser = new User { Id = 1, Username = "123", Password = "123", test };

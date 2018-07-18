@@ -8,7 +8,7 @@ namespace Database.Hubs {
     public class DataHub : Hub {
         public Task Login(string username, string password) {
             var ValidationStatus = false;
-            using(var context = new BackendContext()) {
+            using(var context = new DiaryContext()) {
                 try {
                     var Query = context.Users
                         .Single(b => b.Username.Equals(username));
