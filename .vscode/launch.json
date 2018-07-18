@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/DataServer/bin/Debug/netcoreapp2.1/DataServer.dll",
+            "program": "${workspaceFolder}/Database/bin/Debug/netcoreapp2.1/Database.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/DataServer",
+            "cwd": "${workspaceFolder}/Database",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {

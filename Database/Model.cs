@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DiaryBackend {
     public class BackendContext : DbContext {
         public DbSet<User> Users { get; set; }
-
+        public DbSet<Entry> Entries { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder OptionsBuilder) {
             OptionsBuilder.UseSqlite("Data Source=backend.db");
         }

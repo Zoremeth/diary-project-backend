@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DiaryBackend;
 using Microsoft.AspNetCore.SignalR;
 
-namespace DataServer.Hubs {
+namespace Database.Hubs {
     public class DataHub : Hub {
         public Task Login(string username, string password) {
             var ValidationStatus = false;

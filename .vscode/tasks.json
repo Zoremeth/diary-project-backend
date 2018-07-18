@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/DataServer/DataServer.csproj"
+                "${workspaceFolder}/Database/Database.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
