@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace DiaryBackend {
@@ -10,6 +11,7 @@ namespace DiaryBackend {
         }
     }
     public class Entry {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Title { get; set; }
         public string Date { get; set; }
@@ -22,6 +24,8 @@ namespace DiaryBackend {
         public int Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+
+        public bool LoggedIn { get; set; }
         public List<Entry> Entries { get; set; }
     }
 

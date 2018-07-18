@@ -1,26 +1,57 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiaryBackend;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Database.Hubs {
-    public class DataHub : Hub {
-        public Task Login(string username, string password) {
-            var ValidationStatus = false;
+    public interface IClient {
+        Task ValidationDone(bool validationSuccessful);
+        Task RegistrationDone(bool registrationSuccessful);
+        Task EntriesRetrieved(List<Entry> entries);
+    }
+    public class DataHub : Hub<IClient> {
+        public async Task Login(string username, string password) {
+            bool validationStatus;
             using(var context = new DiaryContext()) {
-                try {
-                    var Query = context.Users
-                        .Single(b => b.Username.Equals(username));
-                    if (Query != null) {
-                        ValidationStatus = true;
-                    }
-                } catch (InvalidOperationException) {
-                    Console.WriteLine("Error occured.");
-                    ValidationStatus = false;
+                var user = await context.Users.FirstOrDefaultAsync(b => b.Username == username);
+                var userPassword = await context.Users.FirstOrDefaultAsync(b => b.Password == password);
+                validationStatus = user != null && userPassword != null;
+                if (validationStatus) {
+                    user.LoggedIn = true;
                 }
             }
-            return Clients.Caller.SendAsync("ValidationRequest", ValidationStatus);
+            await Clients.Caller.ValidationDone(validationStatus);
+        }
+
+        public async Task Register(string username, string password) {
+            bool registrationSuccessful;
+            using(var context = new DiaryContext()) {
+                context.Users.Add(new User {
+                    Username = username,
+                        Password = password,
+                        Entries = null,
+                });
+                await context.SaveChangesAsync();
+                var user = await context.Users.FirstOrDefaultAsync(b => b.Username == username);
+                registrationSuccessful = user != null;
+            }
+            await Clients.Caller.RegistrationDone(registrationSuccessful);
+        }
+
+        public async Task GetEntries(string username) {
+            using(var context = new DiaryContext()) {
+                var user = await context.Users.FirstOrDefaultAsync(b => b.Username == username);
+                // For now, reversed. Just testing.
+                if (!user.LoggedIn) {
+                    var entries = context.Entries
+                        .Where(b => b.Id == user.Id)
+                        .ToList();
+                    await Clients.Caller.EntriesRetrieved(entries);
+                }
+            }
         }
     }
 }
