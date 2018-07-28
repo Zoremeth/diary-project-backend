@@ -43,14 +43,12 @@ namespace Database.Hubs {
 
         public async Task GetEntries(string username) {
             using(var context = new DiaryContext()) {
-                var user = await context.Users.FirstOrDefaultAsync(b => b.Username == username);
-                // For now, reversed. Just testing.
-                if (!user.LoggedIn) {
-                    var entries = context.Entries
-                        .Where(b => b.Id == user.Id)
-                        .ToList();
-                    await Clients.Caller.EntriesRetrieved(entries);
-                }
+                var user = await context.Users
+                    .Include(b => b.Entries)
+                    .FirstOrDefaultAsync(b => b.Username == username);
+
+                if (!user.LoggedIn)
+                    await Clients.Caller.EntriesRetrieved(user.Entries);
             }
         }
     }
