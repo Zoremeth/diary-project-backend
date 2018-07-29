@@ -11,6 +11,7 @@ namespace Database.Hubs {
         Task ValidationDone(bool validationSuccessful);
         Task RegistrationDone(bool registrationSuccessful);
         Task EntriesRetrieved(List<Entry> entries);
+        Task EntriesSaved(bool saveSuccesful);
     }
     public class DataHub : Hub<IClient> {
         public async Task Login(string username, string password) {
@@ -50,6 +51,17 @@ namespace Database.Hubs {
                 if (!user.LoggedIn)
                     await Clients.Caller.EntriesRetrieved(user.Entries);
             }
+        }
+
+        public async Task SaveEntries(int entryId, string content) {
+            bool saveSuccesful;
+            using(var context = new DiaryContext()) {
+                var entry = await context.Entries.FirstOrDefaultAsync(b => b.Id == entryId);
+                entry.Content = content;
+                await context.SaveChangesAsync();
+                saveSuccesful = entry != null;
+            }
+            await Clients.Caller.EntriesSaved(saveSuccesful);
         }
     }
 }
